@@ -1,11 +1,12 @@
 # NeuralEncodingManifolds
-Code for analysis of neural populations in response to an ensemble of stimuli will be available shortly. For more information, please refer to the paper:
+Here you will find the code for the analysis of neural populations in response to an ensemble of stimuli. For more information, please refer to the paper:
 
 > Dyballa, L. et al. (2023), "Population encoding of stimulus features along the visual hierarchy", Preprint available on bioRxiv: https://www.biorxiv.org/content/10.1101/2023.06.27.545450v2
 
 ## Contents
 
 Code files are organized into folders, also containing examples (python notebooks) explaining usage.
+
 [`creating-the-tensor`](/creating-the-tensor) -  Creating the tensor of response maps from spike files (includes kernel smoothing, displaying response maps for multiple stimuli, building the tensor)
 
 [`permuted-decomposition`](/permuted-decomposition) - running the permuted factorization (matlab files), selection of the number of tensor components to use, plotting resulting factors
