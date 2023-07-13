@@ -91,7 +91,7 @@ function permcp(tensorname,method,minrank,maxrank,nreps,shiftAmount)
             end
         end
 
-        save([tensorname '_rank' num2str(RANK,'%02d') '.mat'],'lams','factors','fits','objs');
+        save([tensorname '_rank' num2str(RANK,'%02d') '_nreps' num2str(nreps) '.mat'],'lams','factors','fits','objs');
     end
 end
 
