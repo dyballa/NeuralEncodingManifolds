@@ -22,7 +22,7 @@ Simply copy the functions used througout the examples in each folder. You will s
 - Python >= 3.9
 - NumPy >= 1.21.2
 - SciPy >= 1.7.3
-- scikit-learn >= 1.0.2
+- scikit-learn >= 1.1.2
 - Matplotlib >= 3.4.2
 - tensor_toolbox >= v3.1 (MATLAB, for permuted decomposition)
 - IAN >= 1.0.2 (https://github.com/dyballa/IAN)
