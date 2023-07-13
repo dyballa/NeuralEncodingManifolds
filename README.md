@@ -5,15 +5,15 @@ Here you will find the code for the analysis of neural populations in response t
 
 ## Contents
 
-Code files are organized into folders, also containing examples (python notebooks) explaining usage.
+Code files are organized into folders:
 
-[`creating-the-tensor`](/creating-the-tensor) -  Creating the tensor of response maps from spike files (includes kernel smoothing, displaying response maps for multiple stimuli, building the tensor)
+[`creating-the-tensor`](/creating-the-tensor) -  Creating the tensor of response maps from spike files (includes kernel smoothing, displaying response maps for multiple stimuli, building the tensor).
 
-[`permuted-decomposition`](/permuted-decomposition) - running the permuted factorization (matlab files), selection of the number of tensor components to use, plotting resulting factors
+[`permuted-decomposition`](/permuted-decomposition) - Running the permuted factorization (MATLAB files), selection of the number of tensor components to use, and plotting resulting factors.
 
-[`encoding-manifold`](/encoding-manifold) - inferring the encoding manifold (building the neural factor matrix, handling of non-significant responses, inferring the data graph and underlying manifold, dimensionality)
+[`encoding-manifold`](/encoding-manifold) - Inferring the encoding manifold (building the neural factor matrix, handling of non-significant responses, inferring the data graph and underlying manifold, dimensionality).
 
-[`CNNs`](/CNNs) - convolutional neural networks (activity levels, stimulus classification, and sampling procedure)
+[`CNNs`](/CNNs) - Convolutional neural networks (activity across layer, stimulus classification, and sampling procedure).
 
 
 ## Installation
@@ -29,3 +29,6 @@ Simply copy the functions used througout the examples in each folder. You will s
 - tensorflow >= 2.10 (for running the CNN example)
 
 
+## Documentation
+
+You will find detailed usage examples in the python notebooks present in each folder. Feel free to contact me by email if you have any questions.
