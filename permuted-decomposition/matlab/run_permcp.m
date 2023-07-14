@@ -7,7 +7,7 @@ function permcp(tensorname,method,minrank,maxrank,nreps,shiftAmount)
     % by circular-shifting the rows to make the resulting factors
     % agnostic to each neuron's preferred direction of motion.
     % Is saves the output for each # components as a .mat file containing 
-    % the resulting factors, objective, fit, and lambdas for each repetition.
+    % the resulting factors, objective, and lambdas for each repetition.
 
     % This function calls modified versions of files from Tensor Toolbox:
     % Brett W. Bader, Tamara G. Kolda and others, Tensor Toolbox for MATLAB, Version 3.1,
@@ -58,7 +58,6 @@ function permcp(tensorname,method,minrank,maxrank,nreps,shiftAmount)
             
             res.obj = objf;
             fullM1 = full(M1);
-            res.fit = norm(tensorX-fullM1)/normX;
             res.fullM = fullM1;
 
 
@@ -73,7 +72,6 @@ function permcp(tensorname,method,minrank,maxrank,nreps,shiftAmount)
 
 
         factors = {};
-        fits = {};
         objs = {};
         lams = {};
 
@@ -82,7 +80,6 @@ function permcp(tensorname,method,minrank,maxrank,nreps,shiftAmount)
             P = res.P;
             lams{r} = P.lambda';%'
 
-            fits{r} = res.fit;
             objs{r} = res.obj;
             factors{r} = {};
 
@@ -91,7 +88,7 @@ function permcp(tensorname,method,minrank,maxrank,nreps,shiftAmount)
             end
         end
 
-        save([tensorname '_rank' num2str(RANK,'%02d') '_nreps' num2str(nreps) '.mat'],'lams','factors','fits','objs');
+        save([tensorname '_rank' num2str(RANK,'%02d') '_nreps' num2str(nreps) '.mat'],'lams','factors','objs');
     end
 end
 
