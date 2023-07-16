@@ -1,4 +1,4 @@
-function permcp(tensorname,method,minF,maxF,nreps,shiftAmount)
+function run_permcp(tensorname,method,minF,maxF,nreps,shiftAmount)
     %PERMCP Computes a permuted CP decomposition for several choices
     % of the number of components (minF up to maxF) and a given
     % number of repetitions using different random initializations.
