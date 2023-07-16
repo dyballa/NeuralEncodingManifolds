@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 def createFlowDataset(categories, topdir, mydirs, orig_shape, input_shape, scl_factor, N_INSTANCES, trial_len, stride):
     scld_shape = tuple((np.array(orig_shape)*scl_factor).astype('int'))
     NDIRS = len(mydirs)
-    frames_per_stim = (trial_len//stride)
+    frames_per_stim = int(np.ceil(trial_len/stride))
     
     shift_foos = {'0':lambda im,step: np.roll(im,step,1),
                   '45':lambda im,step: np.roll(np.roll(im,step,1),-step,0),
@@ -43,7 +43,7 @@ def createFlowDataset(categories, topdir, mydirs, orig_shape, input_shape, scl_f
 
                 img_array = np.array(img)[:,:,0] #since grayscale, use only one channel
 
-                for fi in range(0,trial_len,stride):
+                for fii,fi in enumerate(range(0,trial_len,stride)):
                     #shift full img
                     shifted_img = shift_foos[d](img_array,fi)
                     #crop from center
@@ -51,7 +51,8 @@ def createFlowDataset(categories, topdir, mydirs, orig_shape, input_shape, scl_f
                     #save
                     if stim_arrays is None:
                         stim_arrays = np.zeros((NDIRS*frames_per_stim,shifted_img.size))
-                    stim_arrays[di*frames_per_stim+fi] = shifted_img.ravel()
+                    stim_arrays[di*frames_per_stim+fii] = shifted_img.ravel()
+
 
             if inst_i not in flow_datasets:
                 flow_datasets[inst_i] = stim_arrays
@@ -90,4 +91,96 @@ def npprint(a,precision=3):
     with np.printoptions(precision=precision, suppress=True):
         print(a)
     return
+
+def plot_image(orig_image, fig_sz, ax=None, vmin=None, vmax=None,
+              axis_off=True):
+
+
+    image = orig_image.copy()
+    
+    assert image.min() >= 0
+    if image.max() <= 1:
+        image = (image*255).astype('int32')
+    else:
+        image = image.astype('int32')
+
+    imsiz = image.shape[1]
+    
+    if ax is None:
+        plt.figure(figsize=(fig_sz,fig_sz))
+        plt.imshow(image, vmin=vmin, vmax=vmax)
+        plt.axis('off')
+        plt.show()
+    else:
+        ax.imshow(image, vmin=vmin, vmax=vmax)
+        if axis_off:
+            ax.axis('off')
+
+def plot_images(images_, fig_sz=2, nrows=None, labels=None, vmin=None, vmax=None):
+
+    images = images_.copy()
+    if nrows is not None:
+        ncols = int(np.ceil(len(images)/nrows))
+    else:
+        nrows = int(np.floor(np.sqrt(len(images))))
+        ncols = int(np.ceil(np.sqrt(len(images))))
+        
+    if ncols*nrows < len(images):
+        nrows += 1
+
+    fig, axes = plt.subplots(nrows, ncols, figsize=(fig_sz*ncols,fig_sz*nrows))
+
+
+    for i, ax in enumerate(axes.ravel()):
+        if i >= len(images):
+            ax.axis('off')
+            continue
+
+        img = images[i]
+        
+
+        ax.set_title('%d' % i,size=11)
+        
+        if labels is not None:
+            plot_image(img, fig_sz, ax, vmin=vmin, vmax=vmax, axis_off=False)
+            ax.set_xlabel(labels[i],size=8)
+            ax.set_xticks([])
+            ax.set_yticks([])
+        else:
+            plot_image(img, fig_sz, ax, vmin=vmin, vmax=vmax)
+            
+    fig.tight_layout()
+    plt.show() 
+
+
+
+def predict_images(images_data, fig_sz=None, nrows=None):
+    imgs = []
+    top1s = []
+    for image_data in images_data:
+        if type(image_data) == str:
+            # Load and resize the image using PIL.
+            img = Image.open(image_data)
+            img_resized = img.resize(input_shape, Image.Resampling.LANCZOS)
+            # Convert the PIL image to a numpy-array with the proper shape.
+            img_array = np.array(img_resized)
+        else:
+            assert image_data.shape == (input_shape[0],input_shape[1],3)
+            img_array = image_data.copy()
+            
+        imgs.append(img_array.astype('uint8'))
+        
+        img_array = preprocess_input(img_array)
+
+        pred = model.predict(np.expand_dims(img_array, axis=0),verbose=0)
+
+        pred_decoded = decode_predictions(pred)[0]
+
+        code, name, score = pred_decoded[0]
+        top1s.append("{0:>6.2%} : {1}".format(score, name))
+        
+    plot_images(np.array(imgs), fig_sz, nrows, labels=top1s, vmin=0, vmax=255)
+
+
+
 
