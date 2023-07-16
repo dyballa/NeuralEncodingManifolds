@@ -19,7 +19,9 @@ function run_permcp(tensorname,method,minF,maxF,nreps,shiftAmount)
     % (http://dx.doi.org/10.1002/cem.1335).
 
  
-    addpath('tensor_toolbox');
+    % NOTE: you may need to modify these following two paths depending on where this file 
+    % is located relative to  your installation of Tensor Toolbox:
+    addpath('tensor_toolbox'); 
     addpath('L-BFGS-B-C/Matlab');
 
     X = load([tensorname '.mat']);
