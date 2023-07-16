@@ -43,7 +43,7 @@ function run_permcp(tensorname,method,minF,maxF,nreps,shiftAmount)
     	fprintf('\n%d:',rep);
             switch method
                 case 'shift'
-                    [M1,~,out] = my_cp_opt(tensorX,F,'init','rand','lower',0,'opt_options',cp_opt_options,'shift',shiftAmount);
+                    [M1,~,out] = perm_cp_opt(tensorX,F,'init','rand','lower',0,'opt_options',cp_opt_options,'shift',shiftAmount);
                 otherwise
                     fprintf('ERROR: Method not recognized: %s\n', method);
                     return;

@@ -32,7 +32,7 @@
 
 
 
-function [f,g,shifts] = my_tt_cp_fun(x,Z,Znormsqr,doshift)
+function [f,g,shifts] = perm_tt_cp_fun(x,Z,Znormsqr,doshift)
 %TT_CP_FUN Calculate function and gradient for CP fit function.
 %
 %  [F,G] = TT_CP_FUN(X,Z) where X is a vector containing the entries of the
@@ -51,7 +51,7 @@ A = tt_cp_vec_to_fac(x,Z);
 
 %% Call cp_fit and cp_gradient using cp_fg
 if doshift > 1
-    [f,G] = my_tt_cp_fg(Z,A,Znormsqr,doshift);
+    [f,G] = perm_tt_cp_fg(Z,A,Znormsqr,doshift);
 else
     [f,G] = tt_cp_fg(Z,A,Znormsqr);
 end

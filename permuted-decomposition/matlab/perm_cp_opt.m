@@ -32,7 +32,7 @@
 
 
 
-function [P, P0, output] = my_cp_opt(Z,R,varargin)
+function [P, P0, output] = perm_cp_opt(Z,R,varargin)
 %CP_OPT Fits a CP model to a tensor via optimization.
 %
 %   K = CP_OPT(X,R) fits an R-component CANDECOMP/PARAFAC (CP) model
@@ -119,12 +119,8 @@ elseif isa(init,'ktensor')
 else
     P0 = cell(N,1);
     if strcmpi(init,'nvecs')
-        if ~isa(Z,'tensor')
-            error('Z must be a tensor to use my modified nvecs');
-        end
-        %opts = struct('svds',false);
         for n=1:N
-            P0{n} = nvecs(Z,n,R);%,opts);
+            P0{n} = nvecs(Z,n,R);
         end
     else
         for n=1:N
@@ -186,13 +182,13 @@ normsqr = norm(Z)^2;
 if use_lbfgsb
     opts = options;
     opts.x0 = tt_fac_to_vec(P0);    
-    [xx,ff,out] = lbfgsb(@(x)my_tt_cp_fun(x,Z,normsqr,doshift), lower, upper, opts);
+    [xx,ff,out] = lbfgsb(@(x)perm_tt_cp_fun(x,Z,normsqr,doshift), lower, upper, opts);
     P = ktensor(tt_cp_vec_to_fac(xx, Z));
     output.ExitMsg = out.lbfgs_message1;
     output.Fit = 100 * (1 - ff /(0.5 * normsqr));
     output.OptOut = out;
 else % POBLANO
-    out = feval(fhandle, @(x)my_tt_cp_fun(x,Z,normsqr,doshift), tt_fac_to_vec(P0), options);
+    out = feval(fhandle, @(x)perm_tt_cp_fun(x,Z,normsqr,doshift), tt_fac_to_vec(P0), options);
     P = ktensor(tt_cp_vec_to_fac(out.X, Z));
     output.ExitFlag  = out.ExitFlag;
     output.Fit = 100 * (1 - out.F /(0.5 * normsqr));

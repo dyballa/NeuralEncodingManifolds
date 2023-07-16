@@ -32,10 +32,10 @@
 
 
 
-function [f,G] = my_tt_cp_fg(Z,A,Znormsqr,NDIRS)
-%MY_TT_CP_FG Computes function and gradient of the CP function.
+function [f,G] = perm_tt_cp_fg(Z,A,Znormsqr,NDIRS)
+%PERM_TT_CP_FG Computes function and gradient of the CP function.
 %
-%   [F,G] = MY_TT_CP_FG(Z,A) calculates F = (1/2) ||Z - ktensor(A)||^2 where
+%   [F,G] = PERM_TT_CP_FG(Z,A) calculates F = (1/2) ||Z - ktensor(A)||^2 where
 %   Z is an N-way tensor and A is a ktensor or a cell array with N
 %   factor matrices. It also calculates the gradient of the CP fit
 %   function where Z is an N-way tensor and A is a ktensor or a
@@ -44,10 +44,10 @@ function [f,G] = my_tt_cp_fg(Z,A,Znormsqr,NDIRS)
 %   other words, G{n}(:,r) is the partial derivative of the fit
 %   function with respect to A{n}(:,r). 
 %
-%   [F,G] = MY_TT_CP_FG(Z,A,NORMZSQR) also passes in the pre-computed
+%   [F,G] = PERM_TT_CP_FG(Z,A,NORMZSQR) also passes in the pre-computed
 %   norm of Z, which makes the computations faster. 
 %
-%   [F,G] = MY_TT_CP_FG(Z,A,NORMZSQR,NDIRS) updates the current components
+%   [F,G] = PERM_TT_CP_FG(Z,A,NORMZSQR,NDIRS) updates the current components
 %   based on the circular-shifted version of each response map in Z that
 %   gives the min cost. NDIRS is the number of rows of the original 2-D response.
 %
