@@ -1,19 +1,19 @@
-function permcp(tensorname,method,minrank,maxrank,nreps,shiftAmount)
+function permcp(tensorname,method,minF,maxF,nreps,shiftAmount)
     %PERMCP Computes a permuted CP decomposition for several choices
-    % for the number of components (minrank up to maxrank) and a given
+    % of the number of components (minF up to maxF) and a given
     % number of repetitions using different random initializations.
     % It assumes each fiber in the tensor is a flattened 2D array,
     % with number of rows given by `shiftAmount`. These will be permuted
     % by circular-shifting the rows to make the resulting factors
     % agnostic to each neuron's preferred direction of motion.
-    % Is saves the output for each # components as a .mat file containing 
-    % the resulting factors, objective, and lambdas for each repetition.
+    % Is saves the output for each F as a .mat file containing 
+    % the resulting factors, lambdas, and objective for each repetition.
 
     % This function calls modified versions of files from Tensor Toolbox:
     % Brett W. Bader, Tamara G. Kolda and others, Tensor Toolbox for MATLAB, Version 3.1,
     % www.tensortoolbox.org, June 2019. https://gitlab.com/tensors/tensor_toolbox.
 
-    % using the direct optimization (OPT) method from
+    % using the direct optimization (OPT) method from:
     % E. Acar, D. M. Dunlavy and T. G. Kolda. A Scalable Optimization Approach for Fitting 
     % Canonical Tensor Decompositions, Journal of Chemometrics 25(2):67-86, February 2011. 
     % (http://dx.doi.org/10.1002/cem.1335).
@@ -31,8 +31,8 @@ function permcp(tensorname,method,minrank,maxrank,nreps,shiftAmount)
 
     cp_opt_options = struct('printEvery',0,'factr',1e-5,'pgtol',1e-4,'maxIts',1000);
 
-    for RANK=minrank:1:maxrank
-        fprintf('RANK %d:\n',RANK);
+    for F=minF:1:maxF
+        fprintf('F %d:\n',F);
         bestFit = inf;
 
         results = [];
@@ -41,7 +41,7 @@ function permcp(tensorname,method,minrank,maxrank,nreps,shiftAmount)
     	fprintf('\n%d:',rep);
             switch method
                 case 'shift'
-                    [M1,~,out] = my_cp_opt(tensorX,RANK,'init','rand','lower',0,'opt_options',cp_opt_options,'shift',shiftAmount);
+                    [M1,~,out] = my_cp_opt(tensorX,F,'init','rand','lower',0,'opt_options',cp_opt_options,'shift',shiftAmount);
                 otherwise
                     fprintf('ERROR: Method not recognized: %s\n', method);
                     return;
@@ -88,7 +88,7 @@ function permcp(tensorname,method,minrank,maxrank,nreps,shiftAmount)
             end
         end
 
-        save([tensorname '_rank' num2str(RANK,'%02d') '_nreps' num2str(nreps) '.mat'],'lams','factors','objs');
+        save([tensorname '_F' num2str(F,'%02d') '_nreps' num2str(nreps) '.mat'],'lams','factors','objs');
     end
 end
 
