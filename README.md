@@ -1,7 +1,9 @@
 # NeuralEncodingManifolds
-Here you will find the code for the analysis of neural populations in response to an ensemble of stimuli. For more information, please refer to the paper:
+Here you will find code for the analysis of neural populations in response to an ensemble of stimuli. For more information, please refer to the paper:
 
 > Dyballa, L. et al. (2023), "Population encoding of stimulus features along the visual hierarchy", Preprint available on bioRxiv: https://www.biorxiv.org/content/10.1101/2023.06.27.545450v2
+
+Additional code for analyzing spike waveforms and CSD can be found [`here`](https://github.com/Mahmood-Hoseini/NeuralEncodingManifolds).
 
 ## Contents
 
