@@ -1,5 +1,64 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import warnings
+
+def fitSmoothingKernelBandwidth(full_traindict, total_trial_len):
+    """Fits a spike smoothing kernel to spike train data using 
+    the improved Sheather-Jones (ISJ) algorithm:
+    
+    Z. I. Botev, J. F. Grotowski, and D. P. Kroese.
+    “Kernel density estimation via diffusion.” 
+    Annals of Statistics, Volume 38, Number 5, pp. 2916-2957, 2010.
+    https://arxiv.org/pdf/1011.2602.pdf
+    
+    (see https://kdepy.readthedocs.io/en/latest/index.html 
+    for more information on this implementation)
+    
+    
+    ---------------
+    Arguments:
+    full_traindict: dict, {stimulus_direction: list of spike time arrays, one per trial}
+    The bandwidth is computed for the stimulus direction that elicited the most spikes.
+    total_trial_len: float or int, total length of a trial used for the trains; must
+        use the same time unit as the spike times in `full_traindict`
+    
+    ---------------
+    Returns:
+    opt_bw: float, optimal bandwidth found
+    fftkde: object, the fitted fftkde object, to be reused when evaluating the kernel
+    """
+    
+
+    # 1) use stimulus direction with max n of spks to estimate optimal bandwidth
+    maxn = -1
+    for d, trains in full_traindict.items():
+
+        data = np.concatenate(trains)
+        assert max(data) < total_trial_len
+        data.sort()
+        n = data.size
+        if n > maxn:
+            maxn = n
+            bestd = d
+
+    data = np.concatenate(full_traindict[bestd])
+
+    # 2) fit bw
+
+    fftkde = FFTKDE(kernel='gaussian', bw='ISJ')
+
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore",category=RuntimeWarning)
+            fftkde = fftkde.fit(data)
+        opt_bw = fftkde.bw
+
+    except:
+        #print(f'fftkde failed: {n} data points')
+        opt_bw = None
+        fftkde = None
+
+    return opt_bw, fftkde #return fftkde object as well, to avoid refitting
 
 def from0to1(arr):
     arr = np.asanyarray(arr)
