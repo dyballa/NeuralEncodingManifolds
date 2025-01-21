@@ -1,7 +1,7 @@
 # NeuralEncodingManifolds
 Here you will find code and data for the analysis of neural populations in response to an ensemble of stimuli. For more information, please refer to the papers:
 
-> Dyballa, L., Field, G. D., Stryker, M. P., & Zucker, S. W. (2024). Encoding manifolds constructed from grating responses organize responses to natural scenes across mouse cortical visual areas. bioRxiv, 2024-10. https://doi.org/10.1101/2024.10.24.620089
+> Dyballa, L., Field, G. D., Stryker, M. P., & Zucker, S. W. (2024). Functional organization and natural scene responses across mouse visual cortical areas revealed with encoding manifolds. bioRxiv, 2024-10. https://doi.org/10.1101/2024.10.24.620089
 
 __Note:__ Code for the preprint above (using data from the Allen Institute) is currently being added to the folder ``allen-data-analysis` in this repository. We expect to be done very soon.
 
