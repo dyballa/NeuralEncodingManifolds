@@ -1,6 +1,8 @@
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
+from glob import glob
+from scipy.io import loadmat
 
 def createFlowDataset(categories, topdir, mydirs, orig_shape, input_shape, scl_factor, N_INSTANCES, trial_len, stride):
     scld_shape = tuple((np.array(orig_shape)*scl_factor).astype('int'))
@@ -181,6 +183,107 @@ def predict_images(images_data, fig_sz=None, nrows=None):
         
     plot_images(np.array(imgs), fig_sz, nrows, labels=top1s, vmin=0, vmax=255)
 
+def khatri_rao(matrices):
+    """Khatri-Rao product of a list of matrices.
+
+    Parameters
+    ----------
+    matrices : list of ndarray
+
+    Returns
+    -------
+    khatri_rao_product: matrix of shape ``(prod(n_i), m)``
+        where ``prod(n_i) = prod([m.shape[0] for m in matrices])``
+        i.e. the product of the number of rows of all the matrices in the
+        product.
+
+    Author
+    ------
+    Jean Kossaifi <https://github.com/tensorly>
+    """
+
+    n_columns = matrices[0].shape[1]
+    n_factors = len(matrices)
+
+    start = ord('a')
+    common_dim = 'z'
+    target = ''.join(chr(start + i) for i in range(n_factors))
+    source = ','.join(i+common_dim for i in target)
+    operation = source+'->'+target+common_dim
+    return np.einsum(operation, *matrices).reshape((-1, n_columns))
 
 
+
+
+
+def loadPreComputedCP(tensorname,basedir,specificFs=[],NMODES=3,verbose=True):
+    
+    """Converts the .mat files produced by tensor decomposition (see `matlab/run_permcp.m`)
+    and aggregates the results from multiple choices of F (number of components) and
+    initializations into a single Python dict."""
+    
+    
+    preComputed = {}
+
+    #parse the F (# of factors) from the file name
+    def parseF(s):
+        assert s[-4:] == '.mat'
+        extn = 4
+        F_str = s[:-extn].split('_F')[-1]
+        return int(F_str)
+    
+    query = '%s/%s*_F*.mat' % (basedir,tensorname)
+ 
+    queryfiles = glob(query)
+
+    F_ = None
+    counted_reps = 0
+    for r in sorted(queryfiles):
+        
+        F = parseF(r)
+
+        if specificFs and F not in specificFs:
+            continue
+
+        if F != F_:
+            if int(verbose) > 1:
+                print()
+            elif int(verbose) == 1 and counted_reps > 0:
+                print(f'({counted_reps})',end=' ')
+            
+            counted_reps = 0 #reset
+            
+            if verbose: print(f'F{F}:',end=' ')
+            F_ = F
+        #if another file from the same F, keep updating the number of reps
+        
+
+
+        matfile = loadmat(r)
+        assert matfile['factors'][0,0].shape[1] == NMODES
+
+        nreps = len(matfile['factors'][0])
+
+        factors = {counted_reps+rep:matfile['factors'][0][rep].squeeze() for rep in range(nreps)}
+        lambdas = {counted_reps+rep:matfile['lams'][0][rep].squeeze() for rep in range(nreps)}
+        objs = {counted_reps+rep:matfile['objs'][0][rep].squeeze() for rep in range(nreps)}
+
+
+        F_precomp = {'all_factors':factors, 'all_lambdas':lambdas, 'all_objs':objs}
+
+
+        counted_reps += nreps
+        
+        if F not in preComputed:
+            preComputed[F] = F_precomp.copy()
+
+        else:#merge results
+            for dkey in F_precomp.keys():
+                preComputed[F][dkey].update(F_precomp[dkey])
+
+    if int(verbose) == 1 and counted_reps > 0:
+        print(f'({counted_reps})')
+        
+    Fs = sorted(preComputed.keys())
+    return preComputed,Fs
 
